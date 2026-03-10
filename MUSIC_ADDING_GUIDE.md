@@ -14,12 +14,14 @@ This guide explains how to add custom music tracks to `BigWigs_EncounterMusic_Ep
 ## Quick steps
 
 1. Put your `.mp3` files in `BigWigs_EncounterMusic_EpicMusicPack/Music/custom/`.
-2. Run `GenerateMusicAutoList.bat`.
-3. Answer whether you want auto-guess enabled.
-4. If you answer `No`, the script can ask you for the artist and title manually for each track.
-5. The script generates or updates `CustomTracks.lua`.
-6. Launch the game or `/reload`.
-7. Open BigWigs Encounter Music and select your new tracks.
+2. Rename `GenerateMusicAutoList.bat.txt` to `GenerateMusicAutoList.bat`.
+3. Rename `GenerateMusicAutoList.ps1.txt` to `GenerateMusicAutoList.ps1`.
+4. Run `GenerateMusicAutoList.bat`.
+5. Answer whether you want auto-guess enabled.
+6. If you answer `No`, the script can ask you for the artist and title manually for each track.
+7. The script generates or updates `CustomTracks.lua`.
+8. Launch the game or `/reload`.
+9. Open BigWigs Encounter Music and select your new tracks.
 
 ## Recommended file naming format
 
