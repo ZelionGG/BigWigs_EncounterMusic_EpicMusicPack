@@ -1,6 +1,11 @@
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a name="readme-top"></a>
 
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![Discord][discord-shield]][discord-url]
 [![License][license-shield]][license-url]
 
 <!-- PROJECT LOGO -->
@@ -252,5 +257,15 @@ If you distribute this pack publicly:
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-[license-shield]: https://img.shields.io/github/license/ZelionGG/BigWigs_EncounterMusic.svg?style=for-the-badge
-[license-url]: https://github.com/ZelionGG/BigWigs_EncounterMusic/blob/main/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/ZelionGG/BigWigs_EncounterMusic_EpicMusicPack.svg?style=for-the-badge
+[contributors-url]: https://github.com/ZelionGG/BigWigs_EncounterMusic_EpicMusicPack/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/ZelionGG/BigWigs_EncounterMusic_EpicMusicPack.svg?style=for-the-badge
+[forks-url]: https://github.com/ZelionGG/BigWigs_EncounterMusic_EpicMusicPack/network/members
+[stars-shield]: https://img.shields.io/github/stars/ZelionGG/BigWigs_EncounterMusic_EpicMusicPack.svg?style=for-the-badge
+[stars-url]: https://github.com/ZelionGG/BigWigs_EncounterMusic_EpicMusicPack/stargazers
+[issues-shield]: https://img.shields.io/github/issues/ZelionGG/BigWigs_EncounterMusic_EpicMusicPack.svg?style=for-the-badge
+[issues-url]: https://github.com/ZelionGG/BigWigs_EncounterMusic_EpicMusicPack/issues
+[discord-shield]: https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white
+[discord-url]: https://discord.gg/g7JZNGSU32
+[license-shield]: https://img.shields.io/github/license/ZelionGG/BigWigs_EncounterMusic_EpicMusicPack.svg?style=for-the-badge
+[license-url]: https://github.com/ZelionGG/BigWigs_EncounterMusic_EpicMusicPack/blob/main/LICENSE
