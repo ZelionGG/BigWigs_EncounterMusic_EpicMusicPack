@@ -1,0 +1,37 @@
+## Interface: 120001, 50503, 38000, 20505, 11508
+
+## Title: BigWigs [|cff69ccf0Encounter Music: Epic Music Pack|r]
+## Title-zhCN: BigWigs [|cff69ccf0Encounter Music: Epic Music Pack|r]
+## Title-zhTW: BigWigs [|cff69ccf0Encounter Music: Epic Music Pack|r]
+## Title-deDE: BigWigs [|cff69ccf0Encounter Music: Epic Music Pack|r]
+## Title-frFR: BigWigs [|cff69ccf0Encounter Music: Epic Music Pack|r]
+## Title-itIT: BigWigs [|cff69ccf0Encounter Music: Epic Music Pack|r]
+## Title-koKR: BigWigs [|cff69ccf0Encounter Music: Epic Music Pack|r]
+## Title-ruRU: BigWigs [|cff69ccf0Encounter Music: Epic Music Pack|r]
+## Title-ptBR: BigWigs [|cff69ccf0Encounter Music: Epic Music Pack|r]
+## Title-esES: BigWigs [|cff69ccf0Encounter Music: Epic Music Pack|r]
+## Title-esMX: BigWigs [|cff69ccf0Encounter Music: Epic Music Pack|r]
+## Notes: Registers Epic Music Pack tracks into BigWigs Encounter Music.
+## Notes-zhCN: Registers Epic Music Pack tracks into BigWigs Encounter Music.
+## Notes-zhTW: Registers Epic Music Pack tracks into BigWigs Encounter Music.
+## Notes-deDE: Registers Epic Music Pack tracks into BigWigs Encounter Music.
+## Notes-frFR: Enregistre les morceaux du pack Epic Music dans BigWigs Encounter Music.
+## Notes-itIT: Registers Epic Music Pack tracks into BigWigs Encounter Music.
+## Notes-koKR: Registers Epic Music Pack tracks into BigWigs Encounter Music.
+## Notes-ruRU: Registers Epic Music Pack tracks into BigWigs Encounter Music.
+## Notes-ptBR: Registers Epic Music Pack tracks into BigWigs Encounter Music.
+## Notes-esES: Registers Epic Music Pack tracks into BigWigs Encounter Music.
+## Notes-esMX: Registers Epic Music Pack tracks into BigWigs Encounter Music.
+
+## LoadOnDemand: 1
+## Dependencies: BigWigs, BigWigs_EncounterMusic
+## Version: @project-version@
+## IconTexture: Interface\AddOns\BigWigs\Media\Icons\minimap_raid.tga
+## Author: ZelionGG
+## X-Category: Raid
+## X-Curse-Project-ID: 1482595
+## X-Wago-ID: XKqAk8Ky
+## X-BigWigs-LoadOn-CoreEnabled: 1
+
+CustomTracks.lua
+Tracks.lua

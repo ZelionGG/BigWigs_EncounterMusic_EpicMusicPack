@@ -1,0 +1,227 @@
+#requires -Version 5.1
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+function Get-Root {
+    if ($PSScriptRoot) { return $PSScriptRoot }
+    return (Get-Location).Path
+}
+
+function Ensure-Dir([string]$Path) {
+    if (-not (Test-Path -LiteralPath $Path)) {
+        New-Item -ItemType Directory -Path $Path | Out-Null
+    }
+}
+
+function Read-YesNo([string]$Message, [bool]$DefaultYes = $true) {
+    while ($true) {
+        $suffix = if ($DefaultYes) { ' [Y/n]' } else { ' [y/N]' }
+        $resp = Read-Host ($Message + $suffix)
+        if ([string]::IsNullOrWhiteSpace($resp)) { return $DefaultYes }
+        switch ($resp.ToLower()) {
+            'y' { return $true }
+            'yes' { return $true }
+            'n' { return $false }
+            'no' { return $false }
+        }
+    }
+}
+
+function Load-CsvMap([string]$FilePath) {
+    $map = @{}
+    if (-not (Test-Path -LiteralPath $FilePath)) { return $map }
+    foreach ($line in Get-Content -LiteralPath $FilePath) {
+        if ([string]::IsNullOrWhiteSpace($line)) { continue }
+        $parts = $line.Split(',', 2)
+        $key = $parts[0].Trim().Trim('"')
+        $value = if ($parts.Count -gt 1) { $parts[1].Trim().Trim('"') } else { '' }
+        if ($key) { $map[$key] = $value }
+    }
+    return $map
+}
+
+function Read-Text([string]$Message, [string]$DefaultValue = '') {
+    $suffix = ''
+    if (-not [string]::IsNullOrWhiteSpace($DefaultValue)) {
+        $suffix = " [$DefaultValue]"
+    }
+
+    $resp = Read-Host ($Message + $suffix)
+    if ([string]::IsNullOrWhiteSpace($resp)) {
+        return $DefaultValue
+    }
+
+    return $resp.Trim()
+}
+
+function Format-TrackPart([string]$Value) {
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        return ''
+    }
+
+    $formatted = (($Value -replace '_', ' ') -replace '\s+', ' ').Trim()
+    $formatted = $formatted -replace '^\-\s*', ''
+    return $formatted.Trim()
+}
+
+function Format-ArtistPart([string]$Value) {
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        return ''
+    }
+
+    $formatted = ($Value -replace '\s+', ' ').Trim()
+    $formatted = $formatted -replace '^\-\s*', ''
+    return $formatted.Trim()
+}
+
+function Get-GuessedParts([string]$Key, $ArtistMap) {
+    $rest = $Key
+    if ($rest.StartsWith('EMP_')) { $rest = $rest.Substring(4) }
+
+    $dashParts = $rest -split '\s-\s', 2
+    if ($dashParts.Count -eq 2) {
+        return @{
+            Artist = Format-ArtistPart $dashParts[0]
+            Title = Format-TrackPart $dashParts[1]
+        }
+    }
+
+    $underscoreParts = $rest.Split('_', 2)
+    if ($underscoreParts.Count -lt 2) {
+        return @{
+            Artist = ''
+            Title = ''
+        }
+    }
+
+    $artistCode = $underscoreParts[0]
+    $artist = if ($ArtistMap.ContainsKey($artistCode) -and $ArtistMap[$artistCode]) {
+        $ArtistMap[$artistCode]
+    } else {
+        $artistCode
+    }
+
+    return @{
+        Artist = Format-TrackPart $artist
+        Title = Format-TrackPart $underscoreParts[1]
+    }
+}
+
+function Guess-Label([string]$Key, [bool]$AutoGuess, $ArtistMap) {
+    $rest = $Key
+    if ($rest.StartsWith('EMP_')) { $rest = $rest.Substring(4) }
+    if (-not $AutoGuess) {
+        return 'EMP - ' + ($rest -replace '_', ' ')
+    }
+
+    $guessedParts = Get-GuessedParts -Key $Key -ArtistMap $ArtistMap
+    if ([string]::IsNullOrWhiteSpace($guessedParts.Artist) -or [string]::IsNullOrWhiteSpace($guessedParts.Title)) {
+        return 'EMP - ' + ($rest -replace '_', ' ')
+    }
+
+    return "EMP - $($guessedParts.Artist) - $($guessedParts.Title)"
+}
+
+function To-TrackId([string]$Key) {
+    $rest = $Key
+    if ($rest.StartsWith('EMP_')) { $rest = $rest.Substring(4) }
+    $rest = $rest.ToLowerInvariant()
+    $rest = [regex]::Replace($rest, '[^a-z0-9]+', '_')
+    $rest = $rest.Trim('_')
+    return "epic_$rest"
+}
+
+function Get-ManualLabel([string]$Key, $ArtistMap) {
+    $rest = $Key
+    if ($rest.StartsWith('EMP_')) { $rest = $rest.Substring(4) }
+    $fallback = 'EMP - ' + ($rest -replace '_', ' ')
+    $guessedParts = Get-GuessedParts -Key $Key -ArtistMap $ArtistMap
+
+    Write-Host ''
+    Write-Host ("Configuring track: {0}" -f $Key) -ForegroundColor Cyan
+
+    $useManual = Read-YesNo 'Enter artist/title manually for this track?' $true
+    if (-not $useManual) {
+        return $fallback
+    }
+
+    $artist = Read-Text 'Artist' $guessedParts.Artist
+    $title = Read-Text 'Title' $guessedParts.Title
+
+    if ([string]::IsNullOrWhiteSpace($artist) -and [string]::IsNullOrWhiteSpace($title)) {
+        return $fallback
+    }
+
+    if ([string]::IsNullOrWhiteSpace($artist)) {
+        return 'EMP - ' + $title
+    }
+
+    if ([string]::IsNullOrWhiteSpace($title)) {
+        return 'EMP - ' + $artist
+    }
+
+    return "EMP - $artist - $title"
+}
+
+function Write-Utf8NoBom([string]$Path, [string[]]$Lines) {
+    $encoding = New-Object System.Text.UTF8Encoding($false)
+    $writer = [System.IO.StreamWriter]::new($Path, $false, $encoding)
+    try {
+        foreach ($line in $Lines) { $writer.WriteLine($line) }
+    } finally {
+        $writer.Dispose()
+    }
+}
+
+try {
+    $root = Get-Root
+    $musicDir = Join-Path $root 'Music\custom'
+    $outFile = Join-Path $root 'CustomTracks.lua'
+    $artistMapPath = Join-Path $root 'artist_map.csv'
+    $overridesPath = Join-Path $root 'music_overrides.csv'
+
+    Ensure-Dir $musicDir
+
+    $autoGuess = Read-YesNo 'Auto guess artist and song name?' $true
+    $artistMap = Load-CsvMap $artistMapPath
+    $overrides = Load-CsvMap $overridesPath
+
+    $files = @(Get-ChildItem -LiteralPath $musicDir -Filter '*.mp3' -File | Sort-Object Name)
+    $lines = @()
+    $lines += 'BWGSEMP_CUSTOM_TRACKS = {'
+
+    foreach ($file in $files) {
+        $key = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
+        $id = To-TrackId $key
+        $name = if ($overrides.ContainsKey($key) -and $overrides[$key]) {
+            $overrides[$key]
+        } elseif ($autoGuess) {
+            Guess-Label -Key $key -AutoGuess $true -ArtistMap $artistMap
+        } else {
+            Get-ManualLabel -Key $key -ArtistMap $artistMap
+        }
+        $safeName = $name -replace '"', "'"
+        $safeFile = $file.Name -replace '"', "'"
+
+        $lines += "`t{"
+        $lines += "`t`tid = `"$id`"," 
+        $lines += "`t`tname = `"$safeName`"," 
+        $lines += "`t`tfile = `"$safeFile`"," 
+        $lines += "`t},"
+    }
+
+    $lines += '}'
+    Write-Utf8NoBom -Path $outFile -Lines $lines
+
+    Write-Host ''
+    Write-Host "[OK] Generated: $outFile" -ForegroundColor Green
+    Write-Host ("     Tracks found: {0}" -f $files.Count) -ForegroundColor Gray
+    Write-Host ("     Overrides loaded: {0}" -f $overrides.Count) -ForegroundColor Gray
+    Write-Host ("     Source folder: {0}" -f $musicDir) -ForegroundColor Gray
+} catch {
+    Write-Host ("[ERROR] {0}" -f $_.Exception.Message) -ForegroundColor Red
+    exit 1
+}
+
+Write-Host ''
+Read-Host 'Press Enter to exit'
