@@ -29,8 +29,8 @@
 ## IconTexture: Interface\AddOns\BigWigs\Media\Icons\minimap_raid.tga
 ## Author: ZelionGG
 ## X-Category: Raid
-## X-Curse-Project-ID: 1482595
-## X-Wago-ID: XKqAk8Ky
+## X-Curse-Project-ID: 1482740
+## X-Wago-ID: nKW3ErKE
 ## X-BigWigs-LoadOn-CoreEnabled: 1
 
 CustomTracks.lua
